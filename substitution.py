@@ -91,17 +91,21 @@ def preprocessInputMessage(chars):
 
    return chars.lower()
 
-def crackSubstitution(msg, numSteps = 7000, restarts = 20):
+def localMaxes(msg, numSteps):
+    while True:
+        key = shuffled(alphabet)
+        yield localMaximum(msg, key, trigramStringProb, numSteps)
+
+def crackSubstitution(msg, numSteps = 7009, restarts = 200):
    msg = preprocessInputMessage(msg)
    print("decrypting message: %s" % msg)
 
-   startingKeys = [shuffled(alphabet) for i in range(restarts)]
-   localMaxes = [localMaximum(msg, key, trigramStringProb, numSteps) 
-                 for key in startingKeys]
-   
-   for x in localMaxes:
+   maxEntropy = -200
+   for x in localMaxes(msg, numSteps):
       (prob, words) = segmentWithProb(x)
-      print(trigramLetterProb(x), prob, words)
+      if prob > maxEntropy:
+          print(trigramLetterProb(x), prob, words)
+          maxEntropy = prob
 
    prob, words = max(segmentWithProb(decryption) for decryption in localMaxes)
    return ' '.join(words)
