@@ -61,7 +61,35 @@ def shuffled(s):
    return ''.join(sList)
 
 def preprocessInputMessage(chars):
-   return ''.join(re.findall('[a-z]+', chars.lower()))
+   """Normalize the input so to have only lowercase letters"""
+   replacement = {}
+
+   letters = set(chars)
+   not_alpha = [x for x in letters if x not in string.ascii_letters]
+   alpha = [x for x in letters if x in string.ascii_letters]
+   lower = [x for x in letters if x.islower()]
+   upper = [x.lower() for x in letters if x.isupper()]
+   duplicated = set(upper).intersection(set(lower))
+   free_letters = set(string.ascii_letters).difference(letters)
+
+   print('unique letters:', ''.join(letters))
+   print('not alpha:', ''.join(not_alpha))
+   print('duplicated:', ''.join(duplicated))
+   print('free_letters:', ''.join(free_letters))
+
+   for letter in letters:
+       to_find = letter.lower() if letter.isupper() else letter.upper()
+       if to_find in letters and letter not in replacement.keys():
+            for c in shuffled(string.ascii_lowercase):
+                if c not in letters and c.upper() not in letters and c not in replacement.values():
+                    print('%s -> %s' % (to_find, c))
+                    replacement[to_find] = c
+                    break
+
+   for key, value in replacement.items():
+       chars = chars.replace(key, value)
+
+   return chars.lower()
 
 def crackSubstitution(msg, numSteps = 7000, restarts = 20):
    msg = preprocessInputMessage(msg)
