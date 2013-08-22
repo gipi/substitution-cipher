@@ -4,9 +4,9 @@ import itertools
 # return a list with tha abc...z translated to 012...25
 encode = lambda y:[ord(x)-97 for x in y]
 decode = lambda y:"".join([chr(x + 97) for x in y])
-def matmult(a,b):# TODO: mod 26
+def matmult(a,b):
     zip_b = zip(*b)
-    return [[sum(ele_a*ele_b for ele_a, ele_b in zip(row_a, col_b)) for col_b in zip_b] for row_a in a]
+    return [[sum(ele_a*ele_b for ele_a, ele_b in zip(row_a, col_b)) % 26 for col_b in zip_b] for row_a in a]
 
 IDENTITY = [
     [0, 1],
